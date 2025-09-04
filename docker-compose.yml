@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  oracle:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle-datadiff
+    environment:
+      ORACLE_PASSWORD: oracle
+      APP_USER: test
+      APP_USER_PASSWORD: test
+    ports:
+      - "1523:1521"
+    volumes:
+      - ./scripts/init-oracle.sql:/container-entrypoint-initdb.d/init-oracle.sql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sqlplus",
+          "-L",
+          "system/oracle@//localhost:1521/XEPDB1",
+          "-S",
+          "exit",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-datadiff
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./scripts/init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql
+
+  datadiff:
+    build:
+      context: ./datadiff
+    container_name: datadiff
+    volumes:
+      - ./scripts:/scripts
+      - ./datadiff.toml:/config/datadiff.toml:ro
+    depends_on:
+      oracle:
+        condition: service_healthy
+      mysql:
+        condition: service_started
+    entrypoint: ["sleep", "infinity"]

@@ -1,0 +1,100 @@
+# Data-diff Configuration File
+# Using reusable database connections
+
+# =============================================================================
+# REUSABLE DATABASE CONNECTIONS
+# =============================================================================
+
+[database.mysql_test]
+driver = "mysql"
+host = "mysql-datadiff"
+port = 3306
+user = "test"
+password = "test"
+database = "testdb"
+
+[database.oracle_test]
+driver = "oracle"
+host = "oracle-datadiff"
+port = 1521
+user = "test"
+password = "test"
+database = "XEPDB1"
+
+# =============================================================================
+# GLOBAL DEFAULTS
+# =============================================================================
+
+[run.default]
+stats = false
+
+# =============================================================================
+# COMPARISON RUNS (using reusable database references)
+# =============================================================================
+
+# Basic employee comparison (identical data)
+[run.employees_basic.1]
+database = "mysql_test"
+table = "employees"
+
+[run.employees_basic.2]  
+database = "oracle_test"
+table = "EMPLOYEES"
+
+# Departments comparison (identical data)
+[run.departments_basic]
+key_columns = ["dept_id", "DEPT_ID"]
+
+[run.departments_basic.1]
+database = "mysql_test"
+table = "departments"
+
+[run.departments_basic.2]
+database = "oracle_test"
+table = "DEPARTMENTS"
+
+# Projects comparison (with differences)
+[run.projects_basic]
+key_columns = ["project_id", "PROJECT_ID"]
+
+[run.projects_basic.1]
+database = "mysql_test"
+table = "projects"
+
+[run.projects_basic.2]
+database = "oracle_test"
+table = "PROJECTS"
+
+# Products comparison (with differences)
+[run.products_basic]
+key_columns = ["product_id", "PRODUCT_ID"]
+
+[run.products_basic.1]
+database = "mysql_test"
+table = "products"
+
+[run.products_basic.2]
+database = "oracle_test"
+table = "PRODUCTS"
+
+# Employee comparison with detailed stats
+[run.employees_stats.1]
+database = "mysql_test"
+table = "employees"
+
+[run.employees_stats.2]
+database = "oracle_test"
+table = "EMPLOYEES"
+
+# Products comparison with limit
+[run.products_limited]
+key_columns = ["product_id", "PRODUCT_ID"]
+limit = 3
+
+[run.products_limited.1]
+database = "mysql_test"
+table = "products"
+
+[run.products_limited.2]
+database = "oracle_test"
+table = "PRODUCTS"
