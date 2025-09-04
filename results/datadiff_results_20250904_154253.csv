@@ -1,0 +1,7 @@
+Table,Description,MySQL_Rows,Oracle_Rows,Differences,Percentage,Status,Details
+employees_basic,Employee Records,3,3,0,0.00%,Identical,"All employee records match"
+departments_basic,Department Records,3,3,0,0.00%,Identical,"All department records match"
+projects_basic,Project Records,3,3,1,33.33%,Different,"Project 105 budget differs: 500000 vs 550000"
+products_basic,Product Records,5,5,1,20.00%,Different,"Product 1005 price differs: 599.99 vs 649.99"
+employees_stats,Employee Statistics,3,3,0,0.00%,Identical,"Statistics match perfectly"
+products_limited,Product Sample,5,5,1,20.00%,Different,"Product 1005 price differs (limited view)"
