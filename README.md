@@ -35,11 +35,11 @@ This runs comprehensive multi-table comparisons using native `data-diff --conf` 
 
 Our multi-table demo includes comparison scenarios:
 
-| Table        | MySQL Rows | Oracle Rows | Differences  | Status             |
-| ------------ | ---------- | ----------- | ------------ | ------------------ |
-| `products`   | 7          | 6           | 3 differences| ⚠️ Price & missing |
-| `customers`  | 6          | 6           | 2 differences| ⚠️ Email & ID      |
-| `orders`     | 7          | 7           | 3 differences| ⚠️ Quantity & IDs  |
+| Table       | MySQL Rows | Oracle Rows | Differences   | Status             |
+| ----------- | ---------- | ----------- | ------------- | ------------------ |
+| `products`  | 7          | 6           | 3 differences | ⚠️ Price & missing |
+| `customers` | 6          | 6           | 2 differences | ⚠️ Email & ID      |
+| `orders`    | 7          | 7           | 3 differences | ⚠️ Quantity & IDs  |
 
 **Expected Differences:**
 
@@ -118,11 +118,11 @@ GitHub-ready documentation:
 
 ## ⚠️ Tables with Differences
 
-| Table             | Differences | Details                                |
-| ----------------- | ----------- | -------------------------------------- |
-| `products_basic`  | 3 (42.86%)  | Price differences and missing record   |
-| `customers_basic` | 2 (33.33%)  | Email differences and different IDs    |
-| `orders_basic`    | 3 (42.86%)  | Quantity and missing/extra orders      |
+| Table             | Differences | Details                              |
+| ----------------- | ----------- | ------------------------------------ |
+| `products_basic`  | 3 (42.86%)  | Price differences and missing record |
+| `customers_basic` | 2 (33.33%)  | Email differences and different IDs  |
+| `orders_basic`    | 3 (42.86%)  | Quantity and missing/extra orders    |
 ```
 
 ## 🔍 How It Works
