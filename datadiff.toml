@@ -93,3 +93,16 @@ table = "products"
 [run.products_limited.2]
 database = "oracle_test"
 table = "PRODUCTS"
+
+# All tables comparison (comprehensive test)
+[run.all_tables_summary]
+key_columns = ["id", "ID"]
+stats = true
+
+[run.all_tables_summary.1]
+database = "mysql_test"
+table = "products"
+
+[run.all_tables_summary.2]
+database = "oracle_test"
+table = "PRODUCTS"
