@@ -13,8 +13,8 @@ docker-compose up -d --build
 This automatically:
 
 - Starts MySQL and Oracle databases
-- Creates the `employees` table in both databases
-- Loads identical sample data into both databases
+- Creates the `products`, `customers`, and `orders` tables in both databases
+- Loads sample data with intentional differences for testing
 - Starts the data-diff comparison container
 
 ## ✅ Run Database Comparison
@@ -33,19 +33,19 @@ This runs comprehensive multi-table comparisons using native `data-diff --conf` 
 
 ## 🎯 Test Results
 
-Our multi-table demo includes 6 different comparison scenarios:
+Our multi-table demo includes comparison scenarios:
 
-| Table         | MySQL Rows | Oracle Rows | Differences  | Status             |
-| ------------- | ---------- | ----------- | ------------ | ------------------ |
-| `employees`   | 3          | 3           | 0 (0.00%)    | ✅ Identical       |
-| `departments` | 3          | 3           | 0 (0.00%)    | ✅ Identical       |
-| `projects`    | 3          | 3           | 1 difference | ⚠️ Budget mismatch |
-| `products`    | 5          | 5           | 1 difference | ⚠️ Price mismatch  |
+| Table        | MySQL Rows | Oracle Rows | Differences  | Status             |
+| ------------ | ---------- | ----------- | ------------ | ------------------ |
+| `products`   | 7          | 6           | 3 differences| ⚠️ Price & missing |
+| `customers`  | 6          | 6           | 2 differences| ⚠️ Email & ID      |
+| `orders`     | 7          | 7           | 3 differences| ⚠️ Quantity & IDs  |
 
 **Expected Differences:**
 
-- **Projects**: Project 105 has different budget values (MySQL: 500000, Oracle: 550000)
-- **Products**: Product 1005 has different prices (MySQL: 599.99, Oracle: 649.99)
+- **Products**: Price differences (Laptop Pro $1299.99→$1399.99, Gaming Chair $199.99→$249.99), Standing Desk missing in Oracle
+- **Customers**: Email differences (jane@example.com → jane.smith@example.com), different customer IDs (6 vs 7)
+- **Orders**: Quantity differences (Order 4: 1→2), missing/extra orders (7 vs 8)
 
 ## 🎨 Beautiful Export Formats
 
@@ -96,8 +96,9 @@ Perfect for spreadsheet analysis:
 
 ```csv
 Table,Description,MySQL_Rows,Oracle_Rows,Differences,Percentage,Status,Details
-employees_basic,Employee Records,3,3,0,0.00%,Identical,"All employee records match"
-projects_basic,Project Records,3,3,1,33.33%,Different,"Project 105 budget differs: 500000 vs 550000"
+products_basic,Product Records,7,6,3,42.86%,Different,"Price differences in rows 1&5; Missing row 7 in Oracle"
+customers_basic,Customer Records,6,6,2,33.33%,Different,"Email difference in row 2; Different customer in row 6/7"
+orders_basic,Order Records,7,7,3,42.86%,Different,"Quantity difference in row 4; Missing row 7; Added row 8"
 ```
 
 ### Sample Markdown Export
@@ -111,16 +112,17 @@ GitHub-ready documentation:
 
 | Metric                     | Count |
 | -------------------------- | ----- |
-| 📋 Tables Compared         | 6     |
-| ✅ Identical Tables        | 2     |
-| ⚠️ Tables with Differences | 4     |
+| 📋 Tables Compared         | 3     |
+| ✅ Identical Tables        | 0     |
+| ⚠️ Tables with Differences | 3     |
 
 ## ⚠️ Tables with Differences
 
-| Table            | Differences | Details                                 |
-| ---------------- | ----------- | --------------------------------------- |
-| `projects_basic` | 1 (33.33%)  | Project 105: budget `500000` → `550000` |
-| `products_basic` | 1 (20.00%)  | Product 1005: price `599.99` → `649.99` |
+| Table             | Differences | Details                                |
+| ----------------- | ----------- | -------------------------------------- |
+| `products_basic`  | 3 (42.86%)  | Price differences and missing record   |
+| `customers_basic` | 2 (33.33%)  | Email differences and different IDs    |
+| `orders_basic`    | 3 (42.86%)  | Quantity and missing/extra orders      |
 ```
 
 ## 🔍 How It Works
@@ -134,9 +136,10 @@ The comparison uses `data-diff` with native TOML configuration only:
 
 **Features:**
 
-- **Config-only approach**: All parameters defined in `datadiff.toml` (no inline parameters)
+- **Auto-discovery**: Automatically detects all comparison runs from TOML config
 - **Universal script**: Works from host or inside container
-- **Multiple scenarios**: 6 different comparison runs covering all tables
+- **Flexible configuration**: Add new comparisons by just updating TOML file
+- **Multiple scenarios**: Statistical analysis, row limits, and basic comparisons
 - **Cross-database**: Compares MySQL and Oracle with proper key column handling
 
 **Output includes:**
@@ -177,49 +180,48 @@ threads = 2
 
 # Specific comparison runs
 [run.run_name.1]           # First source (numbered .1)
-database = "mysql://test:test@mysql-datadiff:3306/testdb"  # URI or database name
-table = "employees"
+database = "mysql_test"    # Reference to reusable database connection
+table = "products"
 
 [run.run_name.2]           # Second source (numbered .2)
-database = "oracle://test:test@oracle-datadiff:1521/XEPDB1"
-table = "EMPLOYEES"        # Note: Oracle uses uppercase table names
+database = "oracle_test"   # Reference to reusable database connection
+table = "PRODUCTS"         # Note: Oracle uses uppercase table names
 
 [run.run_name]             # Run-specific settings
-key_columns = ["id"]       # Primary key columns for comparison
+key_columns = ["id", "ID"] # Primary key columns for comparison
 stats = true               # Include statistics summary
 limit = 100                # Limit detailed results (optional)
-threads = 4                # Database threads (optional)
 ```
 
 ### Current Configuration
 
-Our `datadiff.toml` contains two comparison scenarios:
+Our `datadiff.toml` uses flexible auto-discovery with multiple comparison scenarios:
 
 ```toml
 # Statistics-focused comparison
 [run.compare_with_stats.1]
-database = "mysql://test:test@mysql-datadiff:3306/testdb"
-table = "employees"
+database = "mysql_test"
+table = "products"
 
 [run.compare_with_stats.2]
-database = "oracle://test:test@oracle-datadiff:1521/XEPDB1"
-table = "EMPLOYEES"
+database = "oracle_test"
+table = "PRODUCTS"
 
 [run.compare_with_stats]
-key_columns = ["id"]
+key_columns = ["id", "ID"]
 stats = true
 
 # Detailed comparison
 [run.compare_detailed.1]
-database = "mysql://test:test@mysql-datadiff:3306/testdb"
-table = "employees"
+database = "mysql_test"
+table = "customers"
 
 [run.compare_detailed.2]
-database = "oracle://test:test@oracle-datadiff:1521/XEPDB1"
-table = "EMPLOYEES"
+database = "oracle_test"
+table = "CUSTOMERS"
 
 [run.compare_detailed]
-key_columns = ["id"]
+key_columns = ["id", "ID"]
 limit = 100
 ```
 
@@ -265,67 +267,47 @@ database = "testdb"
 driver = "oracle"
 host = "oracle-prod"
 user = "test"
-password = "test"
+password = "oracle"
 port = 1521
-service_name = "XEPDB1"
+database = "XE"
 
-[database.postgres_staging]
-driver = "postgresql"
-host = "postgres-staging"
-user = "test"
-password = "test"
-port = 5432
-database = "testdb"
+# Products comparison with statistics
+[run.products_stats.1]
+database = "mysql_test"
+table = "products"
 
-# Table 1: Employee comparison (MySQL vs Oracle)
-[run.employees_comparison.1]
-database = "mysql_dev"
-table = "employees"
+[run.products_stats.2]
+database = "oracle_test"
+table = "PRODUCTS"
 
-[run.employees_comparison.2]
-database = "oracle_prod"
-table = "EMPLOYEES"
-
-[run.employees_comparison]
-key_columns = ["id"]
-stats = true
-limit = 50
-
-# Table 2: Department comparison (MySQL vs PostgreSQL)
-[run.departments_comparison.1]
-database = "mysql_dev"
-table = "departments"
-
-[run.departments_comparison.2]
-database = "postgres_staging"
-table = "departments"
-
-[run.departments_comparison]
-key_columns = ["dept_id"]
-columns = ["dept_name", "manager_id", "budget"]
+[run.products_stats]
+key_columns = ["id", "ID"]
 stats = true
 
-# Table 3: Projects comparison (Oracle vs PostgreSQL)
-[run.projects_comparison.1]
-database = "oracle_prod"
-table = "PROJECTS"
+# Customers comparison (basic)
+[run.customers_basic.1]
+database = "mysql_test"
+table = "customers"
 
-[run.projects_comparison.2]
-database = "postgres_staging"
-table = "projects"
+[run.customers_basic.2]
+database = "oracle_test"
+table = "CUSTOMERS"
 
-[run.projects_comparison]
-key_columns = ["project_id"]
-where = "status = 'ACTIVE'"
-stats = true
-threads = 2
+[run.customers_basic]
+key_columns = ["id", "ID"]
 
-# Table 4: Large table with performance tuning
-[run.transactions_comparison.1]
-database = "mysql_dev"
-table = "transactions"
+# Orders comparison with row limit
+[run.orders_limited.1]
+database = "mysql_test"
+table = "orders"
 
-[run.transactions_comparison.2]
+[run.orders_limited.2]
+database = "oracle_test"
+table = "ORDERS"
+
+[run.orders_limited]
+key_columns = ["id", "ID"]
+limit = 5
 database = "postgres_staging"
 table = "transactions"
 

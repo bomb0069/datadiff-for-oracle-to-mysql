@@ -7,12 +7,14 @@ The `run-comparisons.sh` script has been enhanced to automatically discover and 
 ## How It Works
 
 ### 🔍 **Auto-Discovery**
+
 - Scans `datadiff.toml` for all `[run.NAME]` sections
 - Excludes `[run.default]` and numbered subsections (like `[run.NAME.1]`)
 - Automatically extracts run descriptions from comments
 - Runs all discovered comparisons in alphabetical order
 
 ### 🎯 **Key Benefits**
+
 1. **No Code Changes**: Add new comparisons by just updating the TOML file
 2. **Self-Documenting**: Uses comments above run sections as descriptions
 3. **Error Handling**: Reports success/failure for each comparison
@@ -22,6 +24,7 @@ The `run-comparisons.sh` script has been enhanced to automatically discover and 
 ## Usage
 
 ### Running All Comparisons
+
 ```bash
 # Run all configured comparisons automatically
 ./scripts/run-comparisons.sh
@@ -38,7 +41,7 @@ key_columns = ["id", "ID"]
 stats = true
 
 [run.new_comparison_name.1]
-database = "mysql_test" 
+database = "mysql_test"
 table = "your_table"
 
 [run.new_comparison_name.2]
@@ -47,6 +50,7 @@ table = "YOUR_TABLE"
 ```
 
 The script will automatically:
+
 - Discover the new comparison
 - Extract "New comparison description" as the display name
 - Include it in the next run
@@ -96,6 +100,7 @@ Running: customers_basic
 ## Configuration Examples
 
 ### Basic Comparison
+
 ```toml
 # Basic table comparison
 [run.simple_test]
@@ -111,6 +116,7 @@ table = "TABLE_NAME"
 ```
 
 ### Statistical Analysis
+
 ```toml
 # Statistical comparison with detailed metrics
 [run.stats_analysis]
@@ -127,6 +133,7 @@ table = "PRODUCTS"
 ```
 
 ### Limited Row Comparison
+
 ```toml
 # Sample comparison with row limit
 [run.sample_check]

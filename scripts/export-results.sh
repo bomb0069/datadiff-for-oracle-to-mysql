@@ -287,7 +287,7 @@ table = "products"
 
 [run.products_basic.2]
 database = "oracle_test"
-table = "EMPLOYEES"
+table = "PRODUCTS"
 ```
 
 ## 🚀 Next Steps
