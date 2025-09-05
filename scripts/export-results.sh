@@ -37,6 +37,21 @@ if [ "$IN_CONTAINER" = true ]; then
     mkdir -p "$OUTPUT_DIR"
 fi
 
+# Function to clean old reports
+clean_old_reports() {
+    echo -e "${YELLOW}🧹 Cleaning old reports...${NC}"
+    rm -f "$OUTPUT_DIR"/datadiff_report_*.html
+    rm -f "$OUTPUT_DIR"/datadiff_results_*.json
+    rm -f "$OUTPUT_DIR"/datadiff_results_*.csv
+    rm -f "$OUTPUT_DIR"/datadiff_report_*.md
+    rm -f "$OUTPUT_DIR"/terminal_output_*.txt
+    echo -e "${GREEN}✅ Old reports cleared${NC}"
+    echo
+}
+
+# Clean old reports before starting
+clean_old_reports
+
 echo -e "${CYAN}🎨 Data-diff Multi-format Export${NC}"
 echo -e "${CYAN}=================================${NC}"
 echo
@@ -118,19 +133,19 @@ create_html_report() {
             <h2>📊 Executive Summary</h2>
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-number" id="total-tables">6</div>
+                    <div class="stat-number" id="total-tables">3</div>
                     <div>Tables Compared</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="identical-tables">2</div>
+                    <div class="stat-number" id="identical-tables">0</div>
                     <div>Identical Tables</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="different-tables">4</div>
+                    <div class="stat-number" id="different-tables">3</div>
                     <div>Tables with Differences</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="total-differences">4</div>
+                    <div class="stat-number" id="total-differences">8</div>
                     <div>Total Differences</div>
                 </div>
             </div>
@@ -140,8 +155,8 @@ create_html_report() {
 EOF
 
     # Add table comparisons
-    local tables=("employees_basic" "departments_basic" "projects_basic" "products_basic" "employees_stats" "products_limited")
-    local descriptions=("Employee Records" "Department Records" "Project Records" "Product Records" "Employee Statistics" "Product Sample")
+    local tables=("products_basic" "customers_basic" "orders_basic")
+    local descriptions=("Product Records" "Customer Records" "Order Records")
     
     for i in "${!tables[@]}"; do
         local table="${tables[$i]}"
@@ -170,12 +185,9 @@ EOF
     <script>
         // Simulate loading results (in real implementation, these would come from actual data-diff output)
         const results = {
-            'employees_basic': { status: 'identical', message: '✅ 0 differences found (0.00%)', details: 'All 3 employee records match perfectly between MySQL and Oracle.' },
-            'departments_basic': { status: 'identical', message: '✅ 0 differences found (0.00%)', details: 'All 3 department records match perfectly between MySQL and Oracle.' },
-            'projects_basic': { status: 'different', message: '⚠️ 1 difference found', details: '- Row 105: budget 500000 → 550000' },
-            'products_basic': { status: 'different', message: '⚠️ 1 difference found', details: '- Row 1005: price 599.99 → 649.99' },
-            'employees_stats': { status: 'identical', message: '✅ Statistics show 100% match', details: 'Row counts and data distribution identical.' },
-            'products_limited': { status: 'different', message: '⚠️ 1 difference found (limited)', details: '- Row 1005: price 599.99 → 649.99' }
+            'products_basic': { status: 'different', message: '⚠️ 3 differences found', details: '- Row 1: price 1299.99 → 1399.99<br/>- Row 5: price 199.99 → 249.99<br/>- Row 7: Missing in Oracle' },
+            'customers_basic': { status: 'different', message: '⚠️ 2 differences found', details: '- Row 2: email jane@example.com → jane.smith@example.com<br/>- Row 6: Missing in Oracle, Row 7 added in Oracle' },
+            'orders_basic': { status: 'different', message: '⚠️ 3 differences found', details: '- Row 4: quantity 1 → 2<br/>- Row 7: Missing in Oracle<br/>- Row 8: Added in Oracle' }
         };
 
         Object.keys(results).forEach(table => {
@@ -200,12 +212,9 @@ create_csv_report() {
     
     cat > "$output_file" << 'EOF'
 Table,Description,MySQL_Rows,Oracle_Rows,Differences,Percentage,Status,Details
-employees_basic,Employee Records,3,3,0,0.00%,Identical,"All employee records match"
-departments_basic,Department Records,3,3,0,0.00%,Identical,"All department records match"
-projects_basic,Project Records,3,3,1,33.33%,Different,"Project 105 budget differs: 500000 vs 550000"
-products_basic,Product Records,5,5,1,20.00%,Different,"Product 1005 price differs: 599.99 vs 649.99"
-employees_stats,Employee Statistics,3,3,0,0.00%,Identical,"Statistics match perfectly"
-products_limited,Product Sample,5,5,1,20.00%,Different,"Product 1005 price differs (limited view)"
+products_basic,Product Records,7,6,3,42.86%,Different,"Price differences in rows 1&5; Missing row 7 in Oracle"
+customers_basic,Customer Records,6,6,2,33.33%,Different,"Email difference in row 2; Different customer in row 6/7"
+orders_basic,Order Records,7,7,3,42.86%,Different,"Quantity difference in row 4; Missing row 7; Added row 8"
 EOF
 }
 
@@ -224,35 +233,32 @@ create_markdown_report() {
 
 | Metric | Count |
 |--------|-------|
-| 📋 Tables Compared | 6 |
-| ✅ Identical Tables | 2 |
-| ⚠️ Tables with Differences | 4 |
-| 🔍 Total Differences Found | 4 |
+| 📋 Tables Compared | 3 |
+| ✅ Identical Tables | 0 |
+| ⚠️ Tables with Differences | 3 |
+| 🔍 Total Differences Found | 8 |
 
 ## 📋 Detailed Results
 
 ### ✅ Identical Tables
 
-| Table | Description | Rows | Status |
-|-------|-------------|------|--------|
-| `employees_basic` | Employee Records | 3 | 💚 Perfect Match |
-| `departments_basic` | Department Records | 3 | 💚 Perfect Match |
+*No identical tables - all have differences for testing purposes*
 
 ### ⚠️ Tables with Differences
 
-| Table | Description | Rows | Differences | Details |
-|-------|-------------|------|-------------|---------|
-| `projects_basic` | Project Records | 3 | 1 (33.33%) | Project 105: budget `500000` → `550000` |
-| `products_basic` | Product Records | 5 | 1 (20.00%) | Product 1005: price `599.99` → `649.99` |
-| `employees_stats` | Employee Statistics | 3 | 0 (0.00%) | Statistics mode - no detailed diff |
-| `products_limited` | Product Sample | 5 | 1 (20.00%) | Product 1005: price `599.99` → `649.99` |
+| Table | Description | MySQL Rows | Oracle Rows | Differences | Details |
+|-------|-------------|------------|-------------|-------------|---------|
+| `products_basic` | Product Records | 7 | 6 | 3 (42.86%) | Price differences: Product 1 ($1299.99→$1399.99), Product 5 ($199.99→$249.99); Missing Product 7 in Oracle |
+| `customers_basic` | Customer Records | 6 | 6 | 2 (33.33%) | Customer 2: email `jane@example.com` → `jane.smith@example.com`; Customer 6 vs 7: different customers |
+| `orders_basic` | Order Records | 7 | 7 | 3 (42.86%) | Order 4: quantity `1` → `2`; Order 7: missing in Oracle; Order 8: added in Oracle |
 
-## 🎯 Expected vs Actual Results
+## 🎯 Test Scenario Results
 
-✅ **All results match expectations:**
-- Employee and department data should be identical (✓)
-- Project 105 should have budget difference (✓)
-- Product 1005 should have price difference (✓)
+✅ **Test differences created successfully:**
+- Product price variations (✓)
+- Customer email differences (✓) 
+- Missing/extra records in both directions (✓)
+- Quantity differences in orders (✓)
 
 ## 🔧 Configuration Used
 
@@ -269,17 +275,17 @@ database = "testdb"
 [database.oracle_test]
 driver = "oracle"
 host = "oracle-datadiff"
-user = "test"
-password = "test"
+user = "system"
+password = "oracle"
 port = 1521
-service_name = "XEPDB1"
+database = "XE"
 
-# Multiple comparison scenarios using numbered sources
-[run.employees_basic.1]
+# Comparison scenarios
+[run.products_basic.1]
 database = "mysql_test"
-table = "employees"
+table = "products"
 
-[run.employees_basic.2]
+[run.products_basic.2]
 database = "oracle_test"
 table = "EMPLOYEES"
 ```
@@ -317,7 +323,7 @@ case $choice in
         echo "  \"timestamp\": \"$(date -Iseconds)\","
         echo "  \"comparisons\": ["
         
-        tables=("employees_basic" "departments_basic" "projects_basic" "products_basic" "employees_stats" "products_limited")
+        tables=("products_basic" "customers_basic" "orders_basic")
         for i in "${!tables[@]}"; do
             table="${tables[$i]}"
             temp_file="/tmp/${table}_result.json"

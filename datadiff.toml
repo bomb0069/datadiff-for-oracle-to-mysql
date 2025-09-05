@@ -17,9 +17,9 @@ database = "testdb"
 driver = "oracle"
 host = "oracle-datadiff"
 port = 1521
-user = "test"
-password = "test"
-database = "XEPDB1"
+user = "system"
+password = "oracle"
+database = "XE"
 
 # =============================================================================
 # GLOBAL DEFAULTS
@@ -29,45 +29,12 @@ database = "XEPDB1"
 stats = false
 
 # =============================================================================
-# COMPARISON RUNS (using reusable database references)
+# COMPARISON RUNS (using reusable database references)  
 # =============================================================================
 
-# Basic employee comparison (identical data)
-[run.employees_basic.1]
-database = "mysql_test"
-table = "employees"
-
-[run.employees_basic.2]  
-database = "oracle_test"
-table = "EMPLOYEES"
-
-# Departments comparison (identical data)
-[run.departments_basic]
-key_columns = ["dept_id", "DEPT_ID"]
-
-[run.departments_basic.1]
-database = "mysql_test"
-table = "departments"
-
-[run.departments_basic.2]
-database = "oracle_test"
-table = "DEPARTMENTS"
-
-# Projects comparison (with differences)
-[run.projects_basic]
-key_columns = ["project_id", "PROJECT_ID"]
-
-[run.projects_basic.1]
-database = "mysql_test"
-table = "projects"
-
-[run.projects_basic.2]
-database = "oracle_test"
-table = "PROJECTS"
-
-# Products comparison (with differences)
+# Products comparison (identical data)
 [run.products_basic]
-key_columns = ["product_id", "PRODUCT_ID"]
+key_columns = ["id", "ID"]
 
 [run.products_basic.1]
 database = "mysql_test"
@@ -77,18 +44,46 @@ table = "products"
 database = "oracle_test"
 table = "PRODUCTS"
 
-# Employee comparison with detailed stats
-[run.employees_stats.1]
-database = "mysql_test"
-table = "employees"
+# Customers comparison (identical data)
+[run.customers_basic]
+key_columns = ["id", "ID"]
 
-[run.employees_stats.2]
+[run.customers_basic.1]
+database = "mysql_test"
+table = "customers"
+
+[run.customers_basic.2]
 database = "oracle_test"
-table = "EMPLOYEES"
+table = "CUSTOMERS"
+
+# Orders comparison (identical data)
+[run.orders_basic]
+key_columns = ["id", "ID"]
+
+[run.orders_basic.1]
+database = "mysql_test"
+table = "orders"
+
+[run.orders_basic.2]
+database = "oracle_test"
+table = "ORDERS"
+
+# Products comparison with detailed stats
+[run.products_stats]
+key_columns = ["id", "ID"]
+stats = true
+
+[run.products_stats.1]
+database = "mysql_test"
+table = "products"
+
+[run.products_stats.2]
+database = "oracle_test"
+table = "PRODUCTS"
 
 # Products comparison with limit
 [run.products_limited]
-key_columns = ["product_id", "PRODUCT_ID"]
+key_columns = ["id", "ID"]
 limit = 3
 
 [run.products_limited.1]

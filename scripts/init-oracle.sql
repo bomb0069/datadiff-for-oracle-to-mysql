@@ -1,58 +1,55 @@
--- Employees table
-CREATE TABLE employees (
-    id NUMBER PRIMARY KEY,
-    name VARCHAR2(100),
-    email VARCHAR2(100)
-);
+-- Connect as SYSTEM user to create tables in SYSTEM schema
+ALTER SESSION SET CURRENT_SCHEMA=SYSTEM;
 
-INSERT INTO employees (id, name, email) VALUES (1, 'Alice', 'alice@example.com');
-INSERT INTO employees (id, name, email) VALUES (2, 'Bob', 'bob@example.com');
-INSERT INTO employees (id, name, email) VALUES (3, 'Charlie', 'charlie@example.com');
-
--- Departments table
-CREATE TABLE departments (
-    dept_id NUMBER PRIMARY KEY,
-    dept_name VARCHAR2(100),
-    manager_id NUMBER,
-    budget NUMBER(10,2),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-INSERT INTO departments (dept_id, dept_name, manager_id, budget) VALUES (1, 'Engineering', 1, 500000.00);
-INSERT INTO departments (dept_id, dept_name, manager_id, budget) VALUES (2, 'Marketing', 2, 250000.00);
-INSERT INTO departments (dept_id, dept_name, manager_id, budget) VALUES (3, 'Sales', 3, 300000.00);
-INSERT INTO departments (dept_id, dept_name, manager_id, budget) VALUES (4, 'HR', 1, 150000.00);
-
--- Projects table (with intentional differences for testing)
-CREATE TABLE projects (
-    project_id NUMBER PRIMARY KEY,
-    project_name VARCHAR2(150),
-    dept_id NUMBER,
-    status VARCHAR2(20),
-    start_date DATE,
-    budget NUMBER(12,2)
-);
-
-INSERT INTO projects (project_id, project_name, dept_id, status, start_date, budget) VALUES (101, 'Website Redesign', 1, 'ACTIVE', DATE '2024-01-15', 75000.00);
-INSERT INTO projects (project_id, project_name, dept_id, status, start_date, budget) VALUES (102, 'Mobile App', 1, 'ACTIVE', DATE '2024-02-01', 120000.00);
-INSERT INTO projects (project_id, project_name, dept_id, status, start_date, budget) VALUES (103, 'Marketing Campaign', 2, 'COMPLETED', DATE '2024-01-01', 45000.00);
-INSERT INTO projects (project_id, project_name, dept_id, status, start_date, budget) VALUES (104, 'Sales Training', 3, 'COMPLETED', DATE '2024-03-01', 25000.00);
--- Note: Project 105 missing in Oracle for difference testing
-INSERT INTO projects (project_id, project_name, dept_id, status, start_date, budget) VALUES (106, 'Oracle Migration', 1, 'ACTIVE', DATE '2024-05-01', 95000.00);
-
--- Products table (with some differences for testing)
+-- Products table
 CREATE TABLE products (
-    product_id NUMBER PRIMARY KEY,
-    product_name VARCHAR2(100),
-    category VARCHAR2(50),
-    price NUMBER(8,2),
-    stock_quantity NUMBER,
-    active NUMBER(1) DEFAULT 1
+    ID NUMBER PRIMARY KEY,
+    name VARCHAR2(100),
+    price NUMBER(10,2),
+    category VARCHAR2(50)
 );
 
-INSERT INTO products (product_id, product_name, category, price, stock_quantity, active) VALUES (1001, 'Laptop Pro', 'Electronics', 1299.99, 50, 1);
-INSERT INTO products (product_id, product_name, category, price, stock_quantity, active) VALUES (1002, 'Wireless Mouse', 'Electronics', 29.99, 200, 1);
-INSERT INTO products (product_id, product_name, category, price, stock_quantity, active) VALUES (1003, 'Office Chair', 'Furniture', 199.99, 25, 1);
-INSERT INTO products (product_id, product_name, category, price, stock_quantity, active) VALUES (1004, 'Standing Desk', 'Furniture', 449.99, 15, 1);
--- Note: Different price for Standing Desk (449.99 vs 399.99) and missing Bluetooth Headphones
-INSERT INTO products (product_id, product_name, category, price, stock_quantity, active) VALUES (1006, 'Wireless Keyboard', 'Electronics', 59.99, 100, 1);
+-- Customers table  
+CREATE TABLE customers (
+    ID NUMBER PRIMARY KEY,
+    name VARCHAR2(100),
+    email VARCHAR2(100),
+    country VARCHAR2(50)
+);
+
+-- Orders table
+CREATE TABLE orders (
+    ID NUMBER PRIMARY KEY,
+    customer_id NUMBER,
+    product_id NUMBER,
+    quantity NUMBER,
+    order_date DATE
+);
+
+-- Insert products data (with some differences for testing)
+INSERT INTO products (ID, name, price, category) VALUES (1, 'Laptop Pro', 1399.99, 'Electronics');
+INSERT INTO products (ID, name, price, category) VALUES (2, 'Wireless Mouse', 29.99, 'Electronics');
+INSERT INTO products (ID, name, price, category) VALUES (3, 'Mechanical Keyboard', 89.99, 'Electronics');
+INSERT INTO products (ID, name, price, category) VALUES (4, '4K Monitor', 349.99, 'Electronics');
+INSERT INTO products (ID, name, price, category) VALUES (5, 'Gaming Chair', 249.99, 'Furniture');
+INSERT INTO products (ID, name, price, category) VALUES (6, 'USB Hub', 24.99, 'Electronics');
+
+-- Insert customers data (with some differences)
+INSERT INTO customers (ID, name, email, country) VALUES (1, 'John Doe', 'john@example.com', 'USA');
+INSERT INTO customers (ID, name, email, country) VALUES (2, 'Jane Smith', 'jane.smith@example.com', 'Canada');
+INSERT INTO customers (ID, name, email, country) VALUES (3, 'Bob Johnson', 'bob@example.com', 'UK');
+INSERT INTO customers (ID, name, email, country) VALUES (4, 'Alice Brown', 'alice@example.com', 'Australia');
+INSERT INTO customers (ID, name, email, country) VALUES (5, 'Charlie Wilson', 'charlie@example.com', 'Germany');
+INSERT INTO customers (ID, name, email, country) VALUES (7, 'David Lee', 'david@example.com', 'France');
+
+-- Insert orders data (with some differences)
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (1, 1, 1, 1, DATE '2024-01-15');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (2, 2, 2, 2, DATE '2024-01-16');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (3, 3, 3, 1, DATE '2024-01-17');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (4, 1, 4, 2, DATE '2024-01-18');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (5, 4, 5, 1, DATE '2024-01-19');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (6, 5, 6, 3, DATE '2024-01-20');
+INSERT INTO orders (ID, customer_id, product_id, quantity, order_date) VALUES (8, 7, 1, 1, DATE '2024-01-22');
+
+-- Commit all changes
+COMMIT;

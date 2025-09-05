@@ -23,29 +23,29 @@ fi
 echo "📋 Configuration: $CONFIG_PATH (mounted from ./datadiff.toml)"
 echo ""
 
-echo "1. 👥 Employee comparison (identical data)..."
+echo "1. � Products comparison (identical data)..."
 echo "---------------------------------------------"
-${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run employees_basic
-
-echo ""
-echo "2. 🏢 Departments comparison (identical data)..."
-echo "------------------------------------------------"
-${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run departments_basic
-
-echo ""
-echo "3. 🚀 Projects comparison (with differences)..."
-echo "-----------------------------------------------"
-${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run projects_basic
-
-echo ""
-echo "4. 📦 Products comparison (with differences)..."
-echo "-----------------------------------------------"
 ${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run products_basic
 
 echo ""
-echo "5. 📊 Employee stats (detailed output)..."
-echo "-----------------------------------------"
-${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run employees_stats
+echo "2. 👥 Customers comparison (identical data)..."
+echo "-----------------------------------------------"
+${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run customers_basic
+
+echo ""
+echo "3. � Orders comparison (identical data)..."
+echo "-------------------------------------------"
+${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run orders_basic
+
+echo ""
+echo "4. � Products stats (detailed output)..."
+echo "------------------------------------------"
+${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run products_stats
+
+echo ""
+echo "5. � Products with limit (row limit test)..."
+echo "---------------------------------------------"
+${CMD_PREFIX}data-diff --conf $CONFIG_PATH --run products_limited
 
 echo ""
 echo "6. 📦 Products with limit (row limit test)..."
@@ -57,10 +57,9 @@ echo "✅ All multi-table comparisons completed!"
 echo "========================================="
 echo ""
 echo "🎯 Summary of expected results:"
-echo "- Employees: 0% difference (identical data)"
-echo "- Departments: 0% difference (identical data)"  
-echo "- Projects: Shows 1 difference (project budget)"
-echo "- Products: Shows 1 difference (product price)"
+echo "- Products: 0% difference (identical data)"
+echo "- Customers: 0% difference (identical data)"  
+echo "- Orders: 0% difference (identical data)"
 echo "- Stats run: Detailed row counts and percentages"
-echo "- Limited run: Same differences but with row limits"
+echo "- Limited run: Same data but with row limits"
 echo ""
