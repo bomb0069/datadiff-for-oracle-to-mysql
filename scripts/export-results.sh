@@ -303,7 +303,17 @@ EOF
 }
 
 # Main execution
-echo -e "${WHITE}Select export format (1-6):${NC} "
+echo -e "${WHITE}Available export formats:${NC}"
+echo -e "  ${GREEN}1.${NC} Terminal (colorized)"
+echo -e "  ${GREEN}2.${NC} JSON (machine readable)"
+echo -e "  ${GREEN}3.${NC} HTML (web report)"
+echo -e "  ${GREEN}4.${NC} CSV (spreadsheet)"
+echo -e "  ${GREEN}5.${NC} Markdown (documentation)"
+echo -e "  ${GREEN}6.${NC} All formats"
+echo -e "  ${GREEN}7.${NC} Different Fields Comparison Test"
+echo
+
+echo -e "${WHITE}Select export format (1-7):${NC} "
 read -r choice
 
 case $choice in
@@ -398,8 +408,17 @@ case $choice in
         echo -e "${WHITE}📁 Files created:${NC}"
         ls -la "$OUTPUT_DIR"/*_${TIMESTAMP}.* 2>/dev/null || echo "Check $OUTPUT_DIR directory"
         ;;
+    7)
+        echo -e "${YELLOW}🧪 Different Fields Comparison Test${NC}"
+        echo "Running comprehensive test for tables with different field counts..."
+        if [ "$IN_CONTAINER" = false ]; then
+            ./scripts/test-different-fields.sh
+        else
+            /scripts/test-different-fields.sh
+        fi
+        ;;
     *)
-        echo -e "${RED}❌ Invalid choice. Please select 1-6.${NC}"
+        echo -e "${RED}❌ Invalid choice. Please select 1-7.${NC}"
         exit 1
         ;;
 esac

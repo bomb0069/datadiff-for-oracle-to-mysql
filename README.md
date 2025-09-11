@@ -35,17 +35,48 @@ This runs comprehensive multi-table comparisons using native `data-diff --conf` 
 
 Our multi-table demo includes comparison scenarios:
 
-| Table       | MySQL Rows | Oracle Rows | Differences   | Status             |
-| ----------- | ---------- | ----------- | ------------- | ------------------ |
-| `products`  | 7          | 6           | 3 differences | ⚠️ Price & missing |
-| `customers` | 6          | 6           | 2 differences | ⚠️ Email & ID      |
-| `orders`    | 7          | 7           | 3 differences | ⚠️ Quantity & IDs  |
+| Table                | MySQL Rows | Oracle Rows | Differences   | Status             |
+| -------------------- | ---------- | ----------- | ------------- | ------------------ |
+| `products`           | 7          | 6           | 3 differences | ⚠️ Price & missing |
+| `customers`          | 6          | 6           | 2 differences | ⚠️ Email & ID      |
+| `orders`             | 7          | 7           | 3 differences | ⚠️ Quantity & IDs  |
+| `employees`          | 5          | 5           | 1 difference  | ⚠️ Salary & dept   |
+| `product_categories` | 5          | 5           | 1 difference  | ⚠️ Category name   |
 
 **Expected Differences:**
 
 - **Products**: Price differences (Laptop Pro $1299.99→$1399.99, Gaming Chair $199.99→$249.99), Standing Desk missing in Oracle
 - **Customers**: Email differences (jane@example.com → jane.smith@example.com), different customer IDs (6 vs 7)
 - **Orders**: Quantity differences (Order 4: 1→2), missing/extra orders (7 vs 8)
+- **Employees**: Salary difference (John Smith $75,000→$78,000), Department change (David: HR→IT)
+- **Product Categories**: Category name difference (Chairs→Office Equipment)
+
+## 🔧 Advanced Features
+
+### Field-Level Comparison (Different Schema)
+
+Compare tables with different field counts by selecting only common fields:
+
+```bash
+# Compare employees - MySQL has 10 fields, Oracle has 6 fields
+docker exec datadiff data-diff --conf /config/datadiff.toml --run employees_common_fields
+
+# Compare product categories - MySQL has 10 fields, Oracle has 4 fields
+docker exec datadiff data-diff --conf /config/datadiff.toml --run categories_common_fields
+
+# Compare only salary differences
+docker exec datadiff data-diff --conf /config/datadiff.toml --run employees_salary_diff
+
+# Run comprehensive different fields test
+./scripts/test-different-fields.sh
+```
+
+**Schema Differences:**
+
+- **Employees**: MySQL (10 fields) vs Oracle (6 fields) - compares common fields only
+- **Product Categories**: MySQL (10 fields) vs Oracle (4 fields) - compares core fields only
+
+See [DIFFERENT_FIELDS_COMPARISON.md](DIFFERENT_FIELDS_COMPARISON.md) for detailed examples and Thai documentation.
 
 ## 🎨 Beautiful Export Formats
 

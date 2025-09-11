@@ -106,3 +106,53 @@ table = "products"
 [run.all_tables_summary.2]
 database = "oracle_test"
 table = "PRODUCTS"
+
+# =============================================================================
+# COMPARISON RUNS (with column selection)  
+# =============================================================================
+
+# Comparison with different field counts - Employee table
+# MySQL has 10 fields, Oracle has 6 fields - compare only common fields
+[run.employees_common_fields.1]
+database = "mysql_test"
+table = "employees"
+
+[run.employees_common_fields.2]
+database = "oracle_test"
+table = "EMPLOYEES"
+
+[run.employees_common_fields]
+key_columns = ["id", "ID"]
+columns = ["id", "first_name", "last_name", "email", "department", "salary"]
+stats = true
+
+# Product Categories with different field counts
+# MySQL has 10 fields, Oracle has 4 fields - compare only common fields
+[run.categories_common_fields.1]
+database = "mysql_test"
+table = "product_categories"
+
+[run.categories_common_fields.2]
+database = "oracle_test"
+table = "PRODUCT_CATEGORIES"
+
+[run.categories_common_fields]
+key_columns = ["category_id", "CATEGORY_ID"]
+columns = ["category_id", "category_name", "parent_category_id", "is_active"]
+stats = true
+
+# Employees comparison - showing salary differences only
+[run.employees_salary_diff.1]
+database = "mysql_test"
+table = "employees"
+
+[run.employees_salary_diff.2]
+database = "oracle_test"
+table = "EMPLOYEES"
+
+[run.employees_salary_diff]
+key_columns = ["id", "ID"]
+columns = ["id", "first_name", "last_name", "salary"]
+limit = 10
+
+
